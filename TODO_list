@@ -8,3 +8,6 @@ Dosya adı ve hash bilgilerini ana listede toplama
 .doc / .docx uzantılı dokümanlarda sözcük ayrıştırma
 .odt uzantılı dokümanlarda sözcük ayrıştırma
 İnternet üzerinden doküman tarama/ sözcük ayrıştırma
+pdf uzantılı dosyaları txt dosyasına çevirme
+doc/docx uzantılı dosyaları txt dosyasına çevirme
+odt uzantılı dosyaları txt dosyasına çevirme
