@@ -1,5 +1,6 @@
 YAPILACAK İŞLER LİSTESİ
 
+KISA VADELİ HEDEFLERİMİZ
 Türkçe doküman toplama
 Toplanan dokümanların yazım kurallarına uygunluğunu denetleme
 Dosya adı ve hash bilgilerini ana listede toplama
@@ -11,3 +12,10 @@ Dosya adı ve hash bilgilerini ana listede toplama
 pdf uzantılı dosyaları txt dosyasına çevirme
 doc/docx uzantılı dosyaları txt dosyasına çevirme
 odt uzantılı dosyaları txt dosyasına çevirme
+
+UZUN VADELİ HEDEFLERİMİZ
+Oluşturacağımız derlem bilgilerinden de yararlanarak,
+Herhangi bir metnin Türkçe olup olmadığını saptama
+Türkçe dokümanlarda yazım hatalarını düzeltme
+Türkçe dokümanların ana konusunu saptama
+Türkçe dokümanlarda yapısal kurgu hatalarını saptama

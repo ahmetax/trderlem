@@ -8,6 +8,7 @@ import time
 from operator import itemgetter
 from collections import OrderedDict
 
+DATA_KLASOR = "D:/aaa-kaynaklar"
 BHARF = "ÇĞİIÖŞÜ"
 KHARF = "çğiıöşü"
 #Tek tırnağın farklı işlevi olduğu için onu ayraç listesine eklemiyoruz
@@ -137,7 +138,7 @@ if __name__ == "__main__":
     hatalar = []
     sozcuksay=0
 
-    klasor, dosyalar = txt_dosyabul('D:\\aaa-kaynaklar')
+    klasor, dosyalar = txt_dosyabul(DATA_KLASOR)
     for dosya in dosyalar:
         #print(dosya)
         sozcukler = txt_dosyaOku(klasor,dosya)
