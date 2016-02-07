@@ -2,7 +2,8 @@
 #txtokuyucu.py
 #2016-02-06
 #author = Ahmet Aksoy
-#Son güncelleme = 2016-02-06
+#Son güncelleme = 2016-02-07
+#Python 3.5.1 ile test edildi
 import os
 import time
 from operator import itemgetter
