@@ -19,5 +19,6 @@ Herhangi bir metnin Türkçe olup olmadığını saptama (turkcemi.py)
 UZUN VADELİ HEDEFLERİMİZ
 Oluşturacağımız derlem bilgilerinden de yararlanarak,
 Türkçe dokümanlarda yazım hatalarını düzeltme
+Sözcük önerme
 Türkçe dokümanların ana konusunu saptama
 Türkçe dokümanlarda yapısal kurgu hatalarını saptama

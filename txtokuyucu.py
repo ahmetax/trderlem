@@ -12,6 +12,11 @@ from collections import OrderedDict
 DATA_KLASOR = "D:/aaa-kaynaklar"
 BHARF = "ÇĞİIÖŞÜ"
 KHARF = "çğiıöşü"
+#Sadece I ve İ harfleri küçük harfe dönüşürken sorun yaratıyor.
+#Bu yüzden sadec I ve İ harflerini kontrol etmek yeterli olacak
+BHARFX = "Iİ"
+KHARFX = "ıi"
+
 #Tek tırnağın farklı işlevi olduğu için onu ayraç listesine eklemiyoruz
 #Eğer Özel isimlerin çekim ekleri dikkate alınmak istenmezse o da AYRACLAR'a eklenmelidir
 AYRACLAR = ",\.;«»!?-:/\*+_=\"<>()'[]|º#&%"
@@ -23,9 +28,9 @@ def kucukHarfYap(sozcuk):
     ss = ''
     for i in range(len(sozcuk)):
         ok = False
-        for j in range(len(BHARF)):
-            if sozcuk[i]== BHARF[j]:
-                ss += KHARF[j]
+        for j in range(len(BHARFX)):
+            if sozcuk[i]== BHARFX[j]:
+                ss += KHARFX[j]
                 ok = True
                 break
         if ok == False:
@@ -133,8 +138,9 @@ def frekansa_gore(sozluk):
     return ys
 
 
-
 if __name__ == "__main__":
+    #kucukHaryYap fonksiyonunun Türkçe karakterler için doğru çalıştığından emin olalım
+    assert kucukHarfYap("ÇĞIİÖŞÜ")=="çğıiöşü"
     basla = time.perf_counter()
     hatalar = []
     sozcuksay=0

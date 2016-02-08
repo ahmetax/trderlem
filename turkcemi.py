@@ -12,6 +12,8 @@ dosyasında yer aldığını belirlemek
 """
 BHARF = "ÇĞİIÖŞÜ"
 KHARF = "çğiıöşü"
+BHARFX = "Iİ"
+KHARFX = "ıi"
 AYRACLAR = ",\.;«»!?-:/\*+_=\"<>()'[]|º#&%"
 
 #Dikkat! dertop listesinde uzatma/inceltme işaretli sözcükler yok
@@ -26,9 +28,9 @@ def kucukHarfYap(sozcuk):
     ss = ''
     for i in range(len(sozcuk)):
         ok = False
-        for j in range(len(BHARF)):
-            if sozcuk[i]== BHARF[j]:
-                ss += KHARF[j]
+        for j in range(len(BHARFX)):
+            if sozcuk[i]== BHARFX[j]:
+                ss += KHARFX[j]
                 ok = True
                 break
         if ok == False:
@@ -95,6 +97,9 @@ def turkcemi(metin):
 
 
 if __name__ == "__main__":
+    #kucukHaryYap fonksiyonunun Türkçe karakterler için doğru çalıştığından emin olalım
+    assert kucukHarfYap("ÇĞIİÖŞÜ")=="çğıiöşü"
+
     metin = """
     Bu bir Türkçe şarkı metnidir.
     Semavi dinler ne durumda?
@@ -104,5 +109,7 @@ if __name__ == "__main__":
     Bu köşe yaz köşesi, o köşe kış köşesi, ortasında su şişesi.
     Çekoslavakyalılaştıramadıklarımızdan mısınız?
     Avustralyalılaştıramadıklarımızdan mısınız?
+    İstanbul, Eskişehir, Ankara tren güzergahında...
+    ABCÇDEFGĞHIİJKLMNOÖPRSŞTUÜVYZ
     """
     turkcemi(metin)
