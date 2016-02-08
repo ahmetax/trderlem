@@ -1,0 +1,25 @@
+# YAPILACAK İŞLER LİSTESİ
+
+## KISA VADELİ HEDEFLERİMİZ
+
+- Türkçe doküman toplama
+- Toplanan dokümanların yazım kurallarına uygunluğunu denetleme
+- Dosya adı ve hash bilgilerini ana listede toplama
+- .pdf uzantılı dokümanlarda sözcük ayrıştırma
+- .doc / .docx uzantılı dokümanlarda sözcük ayrıştırma
+- .odt uzantılı dokümanlarda sözcük ayrıştırma
+- İnternet üzerinden doküman tarama/ sözcük ayrıştırma
+- pdf uzantılı dosyaları txt dosyasına çevirme
+- doc/docx uzantılı dosyaları txt dosyasına çevirme
+- odt uzantılı dosyaları txt dosyasına çevirme
+
+### GERÇEKLEŞEN KISA VADELİ HEDEFLER
+- .txt uzantılı dokümanlarda sözcük ayrıştırma (txtokuyucu.py)
+- Herhangi bir metnin Türkçe olup olmadığını saptama (turkcemi.py)
+
+## UZUN VADELİ HEDEFLERİMİZ
+- Oluşturacağımız derlem bilgilerinden de yararlanarak,
+- Türkçe dokümanlarda yazım hatalarını düzeltme
+- Sözcük önerme
+- Türkçe dokümanların ana konusunu saptama
+- Türkçe dokümanlarda yapısal kurgu hatalarını saptama
