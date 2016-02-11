@@ -28,7 +28,7 @@ def kucukHarfYap(sozcuk):
 class Veritabani:
     def __init__(self, dosya=None):
         if dosya is None:
-            self.vt = sql.connect(":memory")
+            self.vt = sql.connect(":memory:")
         else:
             self.vt = sql.connect(dosya)
 
@@ -50,6 +50,7 @@ class Veritabani:
 
 class AnaSozluk(Veritabani):
     def __init__(self, dosya="anasozluk.db", yeni=False):
+    #def __init__(self, dosya=None, yeni=False):
         Veritabani.__init__(self, dosya)
         try:
             cevap = self.cevap("select * from sozcukler limit 1")
@@ -135,7 +136,7 @@ class Derlem:
             satir0 += str(satir).strip()
             if len(satir0) > 0:
                 if satir0[-1] == "-":
-                    satir0 = satir0[:-1]
+                    satir0 = satir0[:-1]+' '   # Satır sonundaki tireyi boşluk yap
                     continue
                 else:
                     for ayirac in AYRACLAR:
