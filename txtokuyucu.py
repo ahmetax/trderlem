@@ -17,8 +17,6 @@ KHARF = "çğiıöşü"
 BHARFX = "Iİ"
 KHARFX = "ıi"
 
-#Tek tırnağın farklı işlevi olduğu için onu ayraç listesine eklemiyoruz
-#Eğer Özel isimlerin çekim ekleri dikkate alınmak istenmezse o da AYRACLAR'a eklenmelidir
 AYRACLAR = ",\.;«»!?-:/\*+_=\"<>()'[]|º#&%"
 
 #Asıl bilgiler bu sozlukte yer alacak sozcuk:frekans
