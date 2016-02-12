@@ -181,6 +181,41 @@ class PDFDerlem(Derlem):
             icerik += sayfa.extractText()
         Derlem.__init__(self, icerik.encode("utf8").splitlines(True))
 
+'''
+pdfminer3k örneği için aşağıdaki kitaptan yararlandım:
+Web Scraping with Python:
+Collecting Data from the~Modern Web
+Yazar: Ryan Mitchell
+'''
+class PDFDerlemMiner(Derlem):
+    def __init__(self, hedef):
+        #TODO duzgun turkce metin cikarabilen bir pdf modulu bulmak gerek.
+        from pdfminer.pdfinterp import PDFResourceManager, process_pdf
+        from pdfminer.converter import TextConverter
+        from pdfminer.layout import LAParams
+        from io import StringIO
+        from io import open
+
+        def readPdf(pdfFile):
+            rsrcmgr = PDFResourceManager()
+            retstr = StringIO()
+            laparams = LAParams()
+            device = TextConverter(rsrcmgr,retstr,laparams=laparams)
+
+            process_pdf(rsrcmgr,device,pdfFile)
+            device.close()
+
+            content = retstr.getvalue()
+            retstr.close()
+            return content
+
+        icerik = ""
+        pdfFile = open(hedef,"rb")
+        pdf = readPdf(pdfFile)
+        print(pdf)
+        pdfFile.close()
+        #Derlem.__init__(self, icerik.encode("utf8").splitlines(True))
+
 
 class HTMLDerlem(Derlem):
     def __init__(self, hedef):
@@ -215,6 +250,6 @@ if __name__ == '__main__':
     assert kucukHarfYap("ÇĞIİÖŞÜ")=="çğıiöşü"
     basla = time.perf_counter()
     #htmltest = HTMLDerlem("http://manap.se/test.txt")
-    #pdftest = PDFDerlem("veri/test.pdf")
-    txttest = TXTDerlem("veri/txttest.txt")
+    pdftest = PDFDerlemMiner("veri/test.pdf")
+    #txttest = TXTDerlem("veri/txttest.txt")
     print("Toplam çalışma süresi = {} saniye".format(time.perf_counter()-basla))
