@@ -5,6 +5,7 @@
 #Son güncelleme = 2016-02-08
 #Python 3.5.1 ile test edildi
 import time, sys
+import derlem
 
 """
 Amaç: Bir metni okuyup sözcüklerine ayırmak
@@ -113,6 +114,8 @@ def turkcemi(metin):
         fout.write(soz+"\n")
     fout.close()
     print("Toplam= {} Bulunan= {} Bulunma Oranı= % {}".format(say,var,100*var/say))
+
+
 
 
 if __name__ == "__main__":
