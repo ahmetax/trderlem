@@ -14,13 +14,13 @@ tip (özel isim, isim, sıfat, zarf, vb)
 ...
 döndürülecek
 """
+import time
 dertop = []
-with open("./veri/dertop.txt",encoding="utf-8") as fin:
+with open("./veri/mertop.txt",encoding="utf-8") as fin:
     for soz in fin:
         if soz>='a' and soz < 'b':
             dertop.append(soz.strip())
 print("dertop boyu = "+str(len(dertop)))
-dertop = set(dertop)
 
 lstKokler = []
 with open("./veri/kokler.txt",encoding="utf-8") as fin:
@@ -68,6 +68,7 @@ if __name__ == "__main__":
     fout =open("veri/ekler.txt","w",encoding="utf-8")
     fyok =open("veri/yoklar.txt","w",encoding="utf-8")
     ftek =open("veri/tekler.txt","w",encoding="utf-8")
+    t0 = time.perf_counter()
     for soz in dertop:
         s=soz
         if s in lstKokler:
@@ -97,3 +98,4 @@ if __name__ == "__main__":
     fout.close()
     ftek.close()
     fyok.close()
+    print("\nToplam süre = {} saniye".format(time.perf_counter()-t0))
