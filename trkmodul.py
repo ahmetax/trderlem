@@ -38,7 +38,7 @@ def buyukharf(sozcuk):
                 break
         if ok == False:
             ss += sozcuk[i]
-    ss = ss.lower()
+    ss = ss.upper()
     return ss
 
 def up_lo_kontrol2():

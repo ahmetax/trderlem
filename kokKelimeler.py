@@ -17,11 +17,14 @@ döndürülecek
 Tarama işlemleri kelimenin başından başlayacak
 """
 import time
-
+from trkmodul import kucukharf, buyukharf
 
 dertop = []
 with open("./veri/dertop.txt",encoding="utf-8") as fin:
+    say=0
     for soz in fin:
+        say+=1
+        if say>1500000: break
         if soz>='a' and soz < 'zzzzzzzzzzzzzzzzzzzzzz':
             dertop.append(soz.strip())
 print("dertop boyu = "+str(len(dertop)))
@@ -93,7 +96,6 @@ def deasciify(soz):
             ysoz += 'U'
         else:
             ysoz += soz[i]
-    xsoz = ysoz
     liste =[]
     liste.append(ysoz)
     i = 0
@@ -182,18 +184,80 @@ def duzelt(cumleler):
             ycumleler += ' '+s[0]
     return ycumleler
 
+#dertop listesindeki tüm elemanların "in" kontrolü
+def dertop_kontrol():
+    say=0
+    with open("dertop-kontrol.txt","w") as fout:
+        for i in range(len(dertop)):
+            if dertop[i] not in dertop:
+                print(dertop[i])
+                print(dertop[i], file=fout)
+            say += 1
+            if say % 1000 == 0:
+                print(say,end=" ")
+            if say % 10000 == 0:
+                print("")
+                fout.flush()
+
+#Türkçe karakterler için upper() ve lower() metodlarının kontrolü
+def up_lo_kontrol():
+    up = "ÇĞIİÖŞÜ"
+    lo = "çğıiöşü"
+    if up.lower() != lo:
+        print("up.lower() != lo")
+        print("{}.lower() != {}".format(up,up.lower()))
+
+    if lo.upper() != up:
+        print("lo.upper() != up")
+        print("{}.upper() != {}".format(lo,lo.upper()))
+
+def up_lo_kontrol2():
+    up = "ÇĞIİÖŞÜ"
+    lo = "çğıiöşü"
+
+    if kucukharf(up) != lo:
+        print("kucukharf(up) != lo")
+        print("kucukharf({}) != {}".format(up,kucukharf(up)))
+    else:
+        print("kucukharf({}) = {}".format(up,kucukharf(up)))
+
+
+    if buyukharf(lo) != up:
+        s=buyukharf(lo)
+        print("buyukharf(lo) != up")
+        print("buyukharf({}) != {}".format(lo,s))
+        for i in range(len(s)):
+            print("({} - {}) ".format(s[i],hex(ord(s[i]))) )
+
+
+    else:
+        print("buyukharf({}) = {}".format(lo,buyukharf(lo)))
+
 
 if __name__ == "__main__":
-    s = "sisesi".lower()
+    up_lo_kontrol()
+    print()
+    up_lo_kontrol2()
+    #exit()
+    s = kucukharf("yokmus")
     l1, l2 = deasciify(s)
     print(l1)
     print(l2)
-    s = "cevre".lower()
+    s = kucukharf("cepecevre")
+    l1, l2 = deasciify(s)
+    print(l1)
+    print(l2)
+    s = kucukharf("kose")
+    l1, l2 = deasciify(s)
+    print(l1)
+    print(l2)
+    s = kucukharf("sisesi")
     l1, l2 = deasciify(s)
     print(l1)
     print(l2)
 
-    s = 'Bir varmis bir yokmus, bu köse yaz kösesi bu köse kis kösesi ortasinda su sisesi'.lower()
+    s = kucukharf('Bir varmis bir yokmus bu köse yaz kösesi bu köse kis kösesi ortasinda su sisesi')
+    print()
     print(duzelt(s))
 
 
