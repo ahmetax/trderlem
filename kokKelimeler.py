@@ -2,7 +2,7 @@
 #kokKelimeler.py
 #2016-02-14
 #author = Ahmet Aksoy
-#Son güncelleme = 2016-02-15
+#Son güncelleme = 2016-02-17
 #Python 3.5.1 ve 3.4 ile test edildi
 """
 Bu modülde Kelime sınıfını oluşturacağız
@@ -17,6 +17,7 @@ döndürülecek
 Tarama işlemleri kelimenin başından başlayacak
 """
 import time
+import sys
 from trkmodul import kucukharf, buyukharf
 
 dertop = []
@@ -25,8 +26,7 @@ with open("./veri/dertop.txt",encoding="utf-8") as fin:
     for soz in fin:
         say+=1
         if say>1500000: break
-        if soz>='a' and soz < 'zzzzzzzzzzzzzzzzzzzzzz':
-            dertop.append(soz.strip())
+        dertop.append(soz.strip())
 print("dertop boyu = "+str(len(dertop)))
 
 lstKokler = []
@@ -156,19 +156,20 @@ def deasciify(soz):
         i += 1
 
     #kelime listesinde (dertop) olanları ayır
+
     liste2 = []
     for l in liste:
+        #check if l in dertop    -   l elemanı dertop içinde var mı kontrolü
+        #using in operator is problematic    -  in operatörü bu işlemde sorunlu
         if l in dertop:
             liste2.append(l)
+    #normally only liste2 will be returned   -  aslında sadece liste2 döndürülecek
     return liste2, liste
 
 def duzelt(cumleler):
     ycumleler=''
     sozler = str(cumleler).split()
     for soz in sozler:
-        if soz in dertop:
-            ycumleler += ' '+soz
-            continue
         #aday sözcükleri üret
         s,sx = deasciify(soz)
         if len(s)<1:
@@ -215,51 +216,28 @@ def up_lo_kontrol2():
     up = "ÇĞIİÖŞÜ"
     lo = "çğıiöşü"
 
+    s=kucukharf(up)
     if kucukharf(up) != lo:
         print("kucukharf(up) != lo")
-        print("kucukharf({}) != {}".format(up,kucukharf(up)))
+        print("kucukharf({}) != {}".format(up,s))
     else:
-        print("kucukharf({}) = {}".format(up,kucukharf(up)))
+        print("kucukharf({}) = {}".format(up,s))
 
 
+    s=buyukharf(lo)
     if buyukharf(lo) != up:
-        s=buyukharf(lo)
         print("buyukharf(lo) != up")
         print("buyukharf({}) != {}".format(lo,s))
         for i in range(len(s)):
             print("({} - {}) ".format(s[i],hex(ord(s[i]))) )
-
-
     else:
-        print("buyukharf({}) = {}".format(lo,buyukharf(lo)))
+        print("buyukharf({}) = {}".format(lo,s))
 
 
 if __name__ == "__main__":
-    up_lo_kontrol()
-    print()
-    up_lo_kontrol2()
-    #exit()
-    s = kucukharf("yokmus")
-    l1, l2 = deasciify(s)
-    print(l1)
-    print(l2)
-    s = kucukharf("cepecevre")
-    l1, l2 = deasciify(s)
-    print(l1)
-    print(l2)
-    s = kucukharf("kose")
-    l1, l2 = deasciify(s)
-    print(l1)
-    print(l2)
-    s = kucukharf("sisesi")
-    l1, l2 = deasciify(s)
-    print(l1)
-    print(l2)
-
     s = kucukharf('Bir varmis bir yokmus bu köse yaz kösesi bu köse kis kösesi ortasinda su sisesi')
-    print()
+    print(s)
     print(duzelt(s))
-
 
     """
     say = 0
