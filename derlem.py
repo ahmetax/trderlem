@@ -62,7 +62,7 @@ class AnaSozluk(Veritabani):
 
     def liste_ekle(self, liste):
         for kelime, sayi_ in liste.items():
-            print (kelime, sayi_)
+            #print (kelime, sayi_)
             self.ekle(kelime, sayi = sayi_)
 
     def ekle(self, sozcuk, sayi =1):
@@ -85,6 +85,16 @@ class AnaSozluk(Veritabani):
             return cevaplar[0]
         else:
             return sozcuk, 0
+
+    def hepsi_varmi(self,liste):
+        cr = self.vt.cursor()
+        for kelime, sayi_ in liste.items():
+            cr.execute('select * from sozcukler where sozcuk = "%s" ' % kelime)
+            cevaplar = cr.fetchall()
+            if len(cevaplar) <= 0:
+                print (kelime, sayi_)
+                return False
+        return True
 
     def kapat(self):
         self.vt.commit()
@@ -169,7 +179,13 @@ class Derlem:
                 temp[sozcuk] += 1
             else:
                 temp[sozcuk] = 1
-        self.anasozluk.liste_ekle(temp)
+        #Bulunan sözcüklerin tümü veritabanında mevcutsa,
+        # o doküman daha önce çok büyük olasılıkla taranmıştır
+        if self.anasozluk.hepsi_varmi(temp)==True:
+            print("Tüm kelimeler var! Bu belge daha önce taranmış!")
+        else:
+            self.anasozluk.liste_ekle(temp)
+
 
 class PDFDerlem(Derlem):
     def __init__(self, hedef):
@@ -246,10 +262,65 @@ class TXTDerlem(Derlem):
                 icerik += sat
         Derlem.__init__(self, icerik.splitlines(True))
 
+class TXTDerlemTR(Derlem):
+    def __init__(self, hedef):
+        icerik = ""
+        try:
+            with open(hedef,encoding="utf-8") as fdosya:
+                for sat in fdosya:
+                    icerik += sat
+        except UnicodeDecodeError:
+            with open(hedef,encoding="cp1254") as fdosya:
+                for sat in fdosya:
+                    icerik += sat
+
+        Derlem.__init__(self, icerik.splitlines(True))
+
+
+#Veritabanındaki bilgileri kolay algılanır şekilde metin dosyasına
+#en yüksek frekans en başta olacak şekilde yazıyoruz
+#Hatalı girişler zamanla listenin sonunda kalacakları için elenecekler
+def dosyaya():
+    vt = sql.connect('anasozluk.db')
+    tf = open("veri/sqlite_dokum.txt","w")
+    cr = vt.cursor()
+    sorgu = "select * from sozcukler ORDER BY frekans DESC"
+
+    cr.execute(sorgu)
+    vt.commit()
+    cevaplar = cr.fetchall()
+    if cevaplar:
+        for cevap in cevaplar:
+            satir = "{:08d} {}\n".format(cevap[1],cevap[0])
+            tf.write(satir)
+
+    tf.close()
+    vt.close()
+
+def txt_dosyabul(klasor):
+    liste = []
+    #klasördeki .txt uzantılı ve ismi zzz_ ile başlamayan dosyaları bul
+    for dir, dirs, files in os.walk(klasor):
+        for dosya in files:
+            if dosya.endswith(".txt"):
+                if not dosya.startswith("zzz_"):
+                    #liste.append(os.path.join(root,dosya))
+                    liste.append(dosya)
+
+    return klasor, liste
+
 if __name__ == '__main__':
-    assert kucukHarfYap("ÇĞIİÖŞÜ")=="çğıiöşü"
+    #assert kucukHarfYap("ÇĞIİÖŞÜ")=="çğıiöşü"
     basla = time.perf_counter()
     #htmltest = HTMLDerlem("http://manap.se/test.txt")
-    pdftest = PDFDerlemMiner("veri/test.pdf")
+    #pdftest = PDFDerlemMiner("veri/test.pdf")
     #txttest = TXTDerlem("veri/txttest.txt")
-    print("Toplam çalışma süresi = {} saniye".format(time.perf_counter()-basla))
+    #dosyaya()
+    DATA_KLASOR = "D:/aaa-kaynaklar"
+    klasor, dosyalar = txt_dosyabul(DATA_KLASOR)
+    for d in dosyalar:
+        print(d)
+        txttest = TXTDerlemTR(klasor+"/"+d)
+        print("Toplam çalışma süresi = {} saniye".format(time.perf_counter()-basla))
+
+
