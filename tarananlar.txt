@@ -11,3 +11,10 @@ kitap.txt
 Motivasyon.txt
 nazim.txt
 Sabahattin_Ali-Degirmen_Kagni_Ses.txt
+Eleanor_H_Porter-Pollyanna.txt
+Fakir Baykurt-TIRPAN.txt
+hayvanmezarlığı.txt
+Jose_Mauro_de_Vasconcelos-Seker_Portakali.txt
+miskin.txt
+PauloCoelho_Simyacı.txt
+PLATON-MEKTUPLAR.txt
