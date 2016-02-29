@@ -1,0 +1,13 @@
+#Veritabanına işlenen dosyaların listesi
+(2016.02.29)
+Ahmet Altan - Aldatmak.txt
+Akar, Atilla - Komploların Yüzyılı.txt
+alice.txt
+avalon.txt
+Başkasının Karısı.txt
+calikusu.txt
+ilham veren öyküler.txt
+kitap.txt
+Motivasyon.txt
+nazim.txt
+Sabahattin_Ali-Degirmen_Kagni_Ses.txt
