@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-
+#author = Ahmet Aksoy, İlker Manap
+#Son güncelleme = 2016-02-29
 import sqlite3 as sql
 import os, time
 
