@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #author = Ahmet Aksoy, İlker Manap
-#Son güncelleme = 2016-02-29
+#Son güncelleme = 2016-03-01
 import sqlite3 as sql
-import os, time
+import os, time, datetime
 
 #BHARF = "ÇĞİIÖŞÜ"
 #KHARF = "çğiıöşü"
@@ -11,6 +11,27 @@ BHARFX = "Iİ"
 KHARFX = "ıi"
 
 AYRACLAR = ",\.;«»!?-:/\*+_=\"<>()'[]|º#&%"
+"""
+Yapılan işlemleri loglamak daha sonra yapılacak kontroller için yararlı.
+logfile dosyası program boyunca açık kalıyor.
+"""
+LOGFILE = "loglar/derlemlog"+"{}.txt".format(datetime.datetime.now().strftime("%Y%m%d"))
+logfile = open(LOGFILE,"a+")
+
+#Sözcükler ve frekansları bu sözlükte tutuluyor. Veri tabanı şimdilik devre dışı.
+#Açılışta gensozluk.txt dosyası okunuyor, çıkışta dosya yeniden yazılıyor.
+gensozluk = dict()
+def gensozluk_oku():
+    try:
+        with open("gensozluk.txt",encoding="utf-8") as f:
+            for line in f:
+                l = line.split()
+                gensozluk[l[1].strip()] = int(l[0].strip())
+    except:
+        pass
+
+def damga():
+    return datetime.datetime.now().strftime('%H:%M:%S.%f')
 
 def kucukHarfYap(sozcuk):
     ss = ''
@@ -25,6 +46,22 @@ def kucukHarfYap(sozcuk):
             ss += sozcuk[i]
     ss = ss.lower()
     return ss
+
+def inceltme_yok(sozcuk):
+    s=""
+    for harf in sozcuk:
+        if harf=='â' or harf=='Â':
+            s += 'a'
+        elif harf == 'ê' or harf=='Ê':
+            s += 'e'
+        elif harf == 'û' or harf=='Û':
+            s += 'u'
+        elif harf == 'î' or harf=='Î':
+            s += 'i'
+        else:
+            s+=harf
+    return s
+
 
 class Veritabani:
     def __init__(self, dosya=None):
@@ -61,10 +98,44 @@ class AnaSozluk(Veritabani):
         if (yeni is True) or (os.path.isfile(dosya) is False):
             self.sema("CREATE TABLE sozcukler (sozcuk TEXT, frekans INT)")
 
-    def liste_ekle(self, liste):
+    def eski_liste_ekle(self, liste):
         for kelime, sayi_ in liste.items():
             #print (kelime, sayi_)
             self.ekle(kelime, sayi = sayi_)
+
+    def liste_ekle(self, liste, gentop):
+        var = 0
+        say= len(liste)
+        for kelime, sayi_ in liste.items():
+            #if len(kelime)<2: continue  # Tek karakterlik kelimeleri atla
+            soz = inceltme_yok(kucukHarfYap(kelime))    # inceltme/uzatma işaretini kaldır
+            if soz in gensozluk.keys():
+                gensozluk[soz] += sayi_
+                var += 1
+                if var % 1000 ==0:
+                    print(var, end=' ', flush = True)
+            else:
+                gensozluk[soz]=sayi_
+                #print("{:08d} {}".format(sayi_,soz))
+        """
+        fout = open("gensozluk.txt", "w", encoding="utf-8")
+        sorted(gensozluk.items(), key=lambda x:x[1])
+        for soz, sayi_ in gensozluk.items():
+            fout.write("{:08d} {}\n".format(sayi_,soz))
+        fout.close()
+        """
+        fout = open("gensozluk.txt", "w", encoding="utf-8")
+        sd = sorted(gensozluk.items(), key=lambda x:x[1], reverse=True)
+        for saz in sd:
+            s = "{:08d} {}\n".format(int(saz[1]), saz[0])
+            fout.write(s)
+        fout.close()
+
+        print()
+        print("{} Toplam= {} Ayrık= {} Bulunan= {} Bulunma Oranı= % {}".format(damga(),gentop, say,var,100*var/say))
+        print("{} Toplam= {} Ayrık= {} Bulunan= {} Bulunma Oranı= % {}".format(damga(),gentop, say,var,100*var/say),file=logfile)
+        logfile.flush()
+
 
     def ekle(self, sozcuk, sayi =1):
         kelime, frekans = self.kontrol(sozcuk)
@@ -94,6 +165,12 @@ class AnaSozluk(Veritabani):
             cevaplar = cr.fetchall()
             if len(cevaplar) <= 0:
                 print (kelime, sayi_)
+                return False
+        return True
+
+    def bellek_hepsi_varmi(self,liste):
+        for kelime, sayi_ in liste.items():
+            if kelime not in gensozluk.keys():
                 return False
         return True
 
@@ -162,6 +239,7 @@ class Derlem:
                             sozcukler.append(k)
                     satir0 = ""
         temp = {}
+        gentop = 0  #Dokümandaki toplam sözcük sayısı
         for sozcuk in sozcukler:
             if (sozcuk == "") or (sozcuk.isdigit()):
                 continue
@@ -175,38 +253,33 @@ class Derlem:
                 hatalar.append(sozcuk)
                 continue
             #sozcuk = sozcuk.lower()
-            sozcuk = kucukHarfYap(sozcuk)
+            gentop += 1
+            sozcuk = inceltme_yok(kucukHarfYap(sozcuk))
             if sozcuk in temp:
                 temp[sozcuk] += 1
             else:
                 temp[sozcuk] = 1
         #Bulunan sözcüklerin tümü veritabanında mevcutsa,
         # o doküman daha önce çok büyük olasılıkla taranmıştır
-        if self.anasozluk.hepsi_varmi(temp)==True:
-            print("Tüm kelimeler var! Bu belge daha önce taranmış!")
+        #if self.anasozluk.hepsi_varmi(temp)==True:
+        if self.anasozluk.bellek_hepsi_varmi(temp)==True:
+            print("{} Tüm kelimeler var! Bu belge daha önce taranmış!".format(damga()))
+            print("{} Tüm kelimeler var! Bu belge daha önce taranmış!".format(damga()),file=logfile)
+            logfile.flush()
         else:
-            self.anasozluk.liste_ekle(temp)
+            self.anasozluk.liste_ekle(temp,gentop)
 
 
-class PDFDerlem(Derlem):
-    def __init__(self, hedef):
-        #TODO duzgun turkce metin cikarabilen bir pdf modulu bulmak gerek.
-        #import pyPdf
-        icerik = ""
-        pdf = pyPdf.PdfFileReader(open(hedef,"rb"))
-        for sayfa in pdf.pages:
-            icerik += sayfa.extractText()
-        Derlem.__init__(self, icerik.encode("utf8").splitlines(True))
-
-'''
+"""
 pdfminer3k örneği için aşağıdaki kitaptan yararlandım:
 Web Scraping with Python:
-Collecting Data from the~Modern Web
+Collecting Data from the Modern Web
 Yazar: Ryan Mitchell
-'''
+"""
+#TODO: Bazı dosyalarda 'TextExtractionNot Allowed' durumu var. Belki bir çözüm bulunabilir.
+#Şimdilik bunları try-except bloğu ile atlıyoruz.
 class PDFDerlemMiner(Derlem):
     def __init__(self, hedef):
-        #TODO duzgun turkce metin cikarabilen bir pdf modulu bulmak gerek.
         from pdfminer.pdfinterp import PDFResourceManager, process_pdf
         from pdfminer.converter import TextConverter
         from pdfminer.layout import LAParams
@@ -214,24 +287,31 @@ class PDFDerlemMiner(Derlem):
         from io import open
 
         def readPdf(pdfFile):
-            rsrcmgr = PDFResourceManager()
-            retstr = StringIO()
-            laparams = LAParams()
-            device = TextConverter(rsrcmgr,retstr,laparams=laparams)
+            content =''
+            try:
+                rsrcmgr = PDFResourceManager()
+                retstr = StringIO()
+                laparams = LAParams()
+                device = TextConverter(rsrcmgr,retstr,laparams=laparams)
 
-            process_pdf(rsrcmgr,device,pdfFile)
-            device.close()
+                process_pdf(rsrcmgr,device,pdfFile)
+                device.close()
 
-            content = retstr.getvalue()
-            retstr.close()
+                content = retstr.getvalue()
+                retstr.close()
+            except Exception as e:
+                print("{} {}".format(damga(),e))
+                print("{} {}".format(damga(),e),file=logfile)
+                logfile.flush()
+                pass
             return content
 
         icerik = ""
         pdfFile = open(hedef,"rb")
         pdf = readPdf(pdfFile)
-        print(pdf)
+        #print(pdf)
         pdfFile.close()
-        #Derlem.__init__(self, icerik.encode("utf8").splitlines(True))
+        Derlem.__init__(self, pdf.splitlines(True))
 
 
 class HTMLDerlem(Derlem):
@@ -304,9 +384,16 @@ def txt_dosyabul(klasor):
     for dir, dirs, files in os.walk(klasor):
         for dosya in files:
             if dosya.endswith(".txt"):
-                if not dosya.startswith("zzz_"):
-                    #liste.append(os.path.join(root,dosya))
-                    liste.append(dosya)
+                liste.append(dosya)
+
+    return klasor, liste
+
+def pdf_dosyabul(klasor):
+    liste = []
+    for dir, dirs, files in os.walk(klasor):
+        for dosya in files:
+            if dosya.endswith(".pdf"):
+                liste.append(dosya)
 
     return klasor, liste
 
@@ -317,11 +404,32 @@ if __name__ == '__main__':
     #pdftest = PDFDerlemMiner("veri/test.pdf")
     #txttest = TXTDerlem("veri/txttest.txt")
     #dosyaya()
-    DATA_KLASOR = "D:/aaa-kaynaklar"
-    klasor, dosyalar = txt_dosyabul(DATA_KLASOR)
+    TXT_KLASOR = "D:/aaa-kaynaklar"
+    PDF_KLASOR = "D:/aaa-pdfler"
+    gensozluk_oku()
+    dosyasay =0
+
+    #txt uzantılı dosyalar
+    klasor, dosyalar = txt_dosyabul(TXT_KLASOR)
     for d in dosyalar:
-        print(d)
+        dosyasay +=1
+        print("{} {:06d} {}".format(damga(),dosyasay,d))
+        print("{} {:06d} {}".format(damga(),dosyasay,d), file=logfile)
         txttest = TXTDerlemTR(klasor+"/"+d)
-        print("Toplam çalışma süresi = {} saniye".format(time.perf_counter()-basla))
+        print("{} Toplam çalışma süresi = {} saniye".format(damga(),time.perf_counter()-basla))
+        print("{} Toplam çalışma süresi = {} saniye".format(damga(),time.perf_counter()-basla),file=logfile)
+        logfile.flush()
 
-
+    #pdf uzantılı dosyalar
+    klasor, dosyalar = pdf_dosyabul(PDF_KLASOR)
+    for d in dosyalar:
+        dosyasay +=1
+        print("{} {:06d} {}".format(damga(),dosyasay,d))
+        print("{} {:06d} {}".format(damga(),dosyasay,d), file=logfile)
+        pdftest = PDFDerlemMiner(klasor+"/"+d)
+        print("{} Toplam çalışma süresi = {} saniye".format(damga(),time.perf_counter()-basla))
+        print("{} Toplam çalışma süresi = {} saniye".format(damga(),time.perf_counter()-basla),file=logfile)
+        logfile.flush()
+    #log dosyamızı kapatıyoruz
+    if logfile:
+        logfile.close()

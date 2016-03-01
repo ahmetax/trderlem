@@ -22,6 +22,8 @@
 - Derlem sınıfı oluşturuldu (2016.02.08)- (2016.02.08)
 - İnternet üzerinden adresi belli .txt dosyası okuyan sınıf yazıldı (2016.02.08)- (2016.02.08)
 - Mükerrer taramayı engellemek amacıyla hepsi_varmi() fonksiyonu devreye girdi (2016.02.09)- (2016.02.29)
+- derlem dosyasına log sistemi ekledim (2016.03.01)- (2016.03.01)
+- 590 dosya tarandı. derlem içeriği bir milyonu aştı.
 
 ## UZUN VADELİ HEDEFLERİMİZ
 - Oluşturacağımız derlem bilgilerinden de yararlanarak,
