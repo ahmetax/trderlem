@@ -2,10 +2,9 @@
 #turkcemi.py
 #2016-02-08
 #author = Ahmet Aksoy
-#Son güncelleme = 2016-02-08
+#Son güncelleme = 2016-03-01
 #Python 3.5.1 ile test edildi
 import time, sys
-import derlem
 
 """
 Amaç: Bir metni okuyup sözcüklerine ayırmak
@@ -20,17 +19,11 @@ AYRACLAR = ",\.;«»!?-:/\*+_=\"<>()'[]|º#&%"
 
 #Dikkat! dertop listesinde uzatma/inceltme işaretli sözcükler yok
 #Bütün sözcükler küçük harf
-dertop = []
-with open("./veri/dertop.txt",encoding="utf-8") as fin:
+encok = []
+with open("./veri/encok.txt",encoding="utf-8") as fin:
     for soz in fin:
-        dertop.append(soz.strip())
-print("dertop boyu = "+str(len(dertop)))
-ozel_adlar = []
-with open("./veri/ozel_adlar.txt",encoding="utf-8") as fin:
-    for soz in fin:
-        ozel_adlar.append(soz.strip())
-print("ozel_adlar boyu = "+str(len(ozel_adlar)))
-
+        encok.append(soz.strip())
+print("encok boyu = "+str(len(encok)))
 
 def kucukHarfYap(sozcuk):
     ss = ''
@@ -97,25 +90,16 @@ def turkcemi(metin):
     var = 0
     yok = 0
     for soz in liste:
-        if len(soz)<2: continue
+        #if len(soz)<2: continue
         soz2 = inceltme_yok(kucukHarfYap(soz))
-        if soz2  in dertop or soz2 in ozel_adlar:
+        if soz2  in encok:
             var += 1
             if var % 1000 ==0:
-                print(var)
+                print(var,end=' ',flush=True)
         else:
             yok += 1
-            if soz2 not in yok_liste:
-                yok_liste.append(soz2)
-    var = say - len(yok_liste)
-    fout = open("eksik.txt", "w")
-    for soz in yok_liste:
-        print(soz,)
-        fout.write(soz+"\n")
-    fout.close()
+
     print("Toplam= {} Bulunan= {} Bulunma Oranı= % {}".format(say,var,100*var/say))
-
-
 
 
 if __name__ == "__main__":
@@ -136,10 +120,10 @@ if __name__ == "__main__":
     """
     basla = time.perf_counter()
 
-    #fin = open("D:/aaa-kaynaklar/alice.txt",encoding="utf-8")
-    #fin = open("D:/aaa-kaynaklar/Başkasının Karısı.txt",encoding="utf-8")
-    #fin = open("D:/aaa-kaynaklar/calikusu.txt",encoding="cp1254")
+    #fad = "D:/aaa-kaynaklar/alice.txt"
+    #fad = "D:/aaa-kaynaklar/Başkasının Karısı.txt"
     fad = "D:/aaa-kaynaklar/calikusu.txt"
+    #fad = "D:/aaa-english/python3programs.txt"
 
     metin = ""
     try:
