@@ -81,7 +81,7 @@ def parcala(metin):
 
     return sozcukler
 
-def turkcemi(metin):
+def turkcemi(metin,fout=None):
     #metni sözcüklerine ayır
     liste = parcala(metin)
     yok_liste = []
@@ -100,6 +100,8 @@ def turkcemi(metin):
             yok += 1
 
     print("Toplam= {} Bulunan= {} Bulunma Oranı= % {}".format(say,var,100*var/say))
+    if fout != None:
+        print("Toplam= {} Bulunan= {} Bulunma Oranı= % {}".format(say,var,100*var/say),file=fout,flush=True)
 
 
 if __name__ == "__main__":
